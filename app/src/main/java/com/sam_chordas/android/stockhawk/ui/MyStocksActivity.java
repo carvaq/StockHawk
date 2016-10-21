@@ -74,7 +74,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        mCursorAdapter = new QuoteCursorAdapter(this, null);
+        mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message));
         recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
                 new RecyclerViewItemClickListener.OnItemClickListener() {
                     @Override
@@ -157,7 +157,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         }
                     }
                 })
-                .cancelable(true)
                 .show();
     }
 
@@ -235,5 +234,4 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
     }
-
 }

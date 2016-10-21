@@ -28,10 +28,12 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     private static Context mContext;
     private static Typeface robotoLight;
     private boolean isPercent;
+    private View mEmptyView;
 
-    public QuoteCursorAdapter(Context context, Cursor cursor) {
-        super(context, cursor);
+    public QuoteCursorAdapter(Context context, View emptyView) {
+        super(context, null);
         mContext = context;
+        this.mEmptyView = emptyView;
     }
 
     @Override
@@ -67,6 +69,12 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         String symbol = c.getString(c.getColumnIndex(QuoteColumns.SYMBOL));
         mContext.getContentResolver().delete(QuoteProvider.Quotes.withSymbol(symbol), null, null);
         notifyItemRemoved(position);
+    }
+
+    @Override
+    public Cursor swapCursor(Cursor newCursor) {
+        mEmptyView.setVisibility(newCursor != null && newCursor.getCount() > 0 ? View.GONE : View.VISIBLE);
+        return super.swapCursor(newCursor);
     }
 
     @Override
