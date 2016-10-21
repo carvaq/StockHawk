@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,7 +45,6 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
      */
 
     private Intent mServiceIntent;
-    private ItemTouchHelper mItemTouchHelper;
     private static final int CURSOR_LOADER_ID = 0;
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
@@ -99,26 +99,30 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         });
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(recyclerView);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         if (isConnected()) {
-            long period = 3600L;
-            long flex = 10L;
-            // create a periodic task to pull stocks once every hour after the app has been opened. This
-            // is so Widget data stays up to date.
-            PeriodicTask periodicTask = new PeriodicTask.Builder()
-                    .setService(StockTaskService.class)
-                    .setPeriod(period)
-                    .setFlex(flex)
-                    .setTag(StockIntentService.TAG_PERIODIC)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setRequiresCharging(false)
-                    .build();
-            // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
-            // are updated.
-            GcmNetworkManager.getInstance(this).schedule(periodicTask);
+            startPeriodicUpdateTask();
         }
+    }
+
+    private void startPeriodicUpdateTask() {
+        long period = 3600L;
+        long flex = 10L;
+        // create a periodic task to pull stocks once every hour after the app has been opened. This
+        // is so Widget data stays up to date.
+        PeriodicTask periodicTask = new PeriodicTask.Builder()
+                .setService(StockTaskService.class)
+                .setPeriod(period)
+                .setFlex(flex)
+                .setTag(StockIntentService.TAG_PERIODIC)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .setRequiresCharging(false)
+                .build();
+        // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
+        // are updated.
+        GcmNetworkManager.getInstance(this).schedule(periodicTask);
     }
 
     private void showSearchDialog() {
@@ -126,7 +130,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 .title(R.string.symbol_search)
                 .content(R.string.content_test)
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
+                .negativeText(android.R.string.cancel)
+                .input(R.string.input_hint, R.string.input_prefill, false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         // On FAB click, receive user input. Make sure the stock doesn't already exist
@@ -139,11 +144,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                                 new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
                                 new String[]{input.toString()}, null);
                         if (c != null && c.getCount() != 0) {
-                            Toast toast =
-                                    Toast.makeText(MyStocksActivity.this, R.string.toast_stock_already_saved,
-                                            Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
-                            toast.show();
+                            showCenterMessageToUser(R.string.toast_stock_already_saved);
                         } else {
                             // Add the stock to DB
                             mServiceIntent.putExtra(StockIntentService.EXTRA_TAG,
@@ -156,8 +157,10 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                         }
                     }
                 })
+                .cancelable(true)
                 .show();
     }
+
 
     private boolean isConnected() {
         ConnectivityManager cm =
@@ -175,7 +178,19 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     }
 
     public void networkToast() {
-        Toast.makeText(mContext, getString(R.string.network_toast), Toast.LENGTH_SHORT).show();
+        showShortMessageToUser(R.string.toast_network_required);
+    }
+
+    private void showShortMessageToUser(@StringRes int messageResId) {
+        Toast.makeText(mContext, getString(messageResId), Toast.LENGTH_SHORT).show();
+    }
+
+    private void showCenterMessageToUser(@StringRes int messageResId) {
+        Toast toast =
+                Toast.makeText(MyStocksActivity.this, messageResId,
+                        Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
+        toast.show();
     }
 
     @Override
