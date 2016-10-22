@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/widget_row"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:padding="@dimen/size_8"
+              tools:layout_width="110dp">
+
+	<TextView
+		android:id="@+id/widget_stock_symbol"
+		style="@style/StockSymbolTextStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="start|center_vertical"
+		android:textSize="16sp"
+		tools:text="GOOG"/>
+
+
+	<FrameLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
+
+		<TextView
+			android:id="@+id/widget_change"
+			style="@style/PercentChangeTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end"
+			android:textSize="16sp"
+			tools:text="-100%"/>
+	</FrameLayout>
+</LinearLayout>

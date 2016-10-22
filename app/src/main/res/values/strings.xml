@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Stock Hawk</string>
+	<string name="app_name">A Stock Hawk</string>
 
 	<string name="action_example">Example action</string>
 
@@ -11,5 +11,6 @@
 	<string name="input_prefill"/>
 	<string name="toast_network_required">Uh-oh! This app requires an internet connection</string>
 	<string name="toast_stock_already_saved">This stock is already saved!</string>
-	<string name="message_no_stocks">You don\'t seem to have any stocks yet. Click on the + to add some.</string>
+	<string name="message_no_stocks">You don\'t seem to have any stocks yet.</string>
+	<string name="widget_name">My Stocks</string>
 </resources>

@@ -12,7 +12,6 @@
 		android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE"
 		android:protectionLevel="signature"/>
 
-
 	<application
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
@@ -23,13 +22,14 @@
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
+
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
 		<activity
-			android:theme="@style/AppTheme.Base.LineGraphActivity"
 			android:name=".ui.LineGraphActivity"
-			android:parentActivityName=".ui.MyStocksActivity">
+			android:parentActivityName=".ui.MyStocksActivity"
+			android:theme="@style/AppTheme.Base.LineGraphActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".ui.MyStocksActivity"/>
@@ -50,6 +50,22 @@
 			android:authorities="com.sam_chordas.android.stockhawk.data.QuoteProvider"
 			android:exported="false"/>
 
+		<receiver android:name=".widget.MyStocksWidget">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="android.appwidget.provider"
+				android:resource="@xml/my_stocks_widget_info"/>
+		</receiver>
+
+		<service
+			android:name=".widget.MyStocksRemoteViewsService"
+			android:enabled="true"
+			android:exported="false"
+			android:permission="android.permission.BIND_REMOTEVIEWS">
+		</service>
 	</application>
 
 </manifest>

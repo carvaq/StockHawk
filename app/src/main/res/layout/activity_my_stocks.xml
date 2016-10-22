@@ -12,14 +12,7 @@
 		android:layout_height="match_parent"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-	<TextView
-		android:id="@+id/no_stocks_message"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:paddingRight="@dimen/activity_horizontal_margin"
-		android:text="@string/message_no_stocks"/>
+	<include layout="@layout/empty_view"/>
 
 	<android.support.design.widget.FloatingActionButton
 		android:id="@+id/fab"

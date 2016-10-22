@@ -33,10 +33,11 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     private OnItemClickListener mOnItemClickListener;
     private static final String TRANSITION_RUNNER = "transition_symbol_%s";
 
-    public QuoteCursorAdapter(Context context, View emptyView, OnItemClickListener listener) {
+    public QuoteCursorAdapter(Context context, View emptyView, boolean isPercent, OnItemClickListener listener) {
         super(context, null);
         mContext = context;
         this.mEmptyView = emptyView;
+        this.mIsPercent = isPercent;
         this.mOnItemClickListener = listener;
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
     }

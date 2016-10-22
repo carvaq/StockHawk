@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+              android:orientation="vertical"
+              android:padding="@dimen/widget_margin">
+
+	<TextView
+		android:id="@+id/widget"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/primary"
+		android:fontFamily="sans-serif-smallcaps"
+		android:padding="@dimen/size_8"
+		android:text="@string/widget_name"
+		android:textColor="@android:color/white"
+		android:textSize="22sp"
+		android:textStyle="bold|italic"/>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<include layout="@layout/empty_view"/>
+
+		<ListView
+			android:id="@+id/widget_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+	</FrameLayout>
+
+</LinearLayout>

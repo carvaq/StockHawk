@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
@@ -49,6 +51,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private static final int CURSOR_LOADER_ID = 0;
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
+    private SharedPreferences mDefaultSharedPrefences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         setContentView(R.layout.activity_my_stocks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mDefaultSharedPrefences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
@@ -75,7 +80,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message),
+        boolean isPercent = mDefaultSharedPrefences.getBoolean(getString(R.string.pref_unit_key), true);
+        mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message), isPercent,
                 new QuoteCursorAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClicked(QuoteCursorAdapter.ViewHolder vh, int position) {
@@ -219,9 +225,14 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (id == R.id.action_change_units) {
             // this is for changing stock changes from percent value to dollar value
             mCursorAdapter.toggleUnit();
+
+            boolean isPercent = mDefaultSharedPrefences.getBoolean(getString(R.string.pref_unit_key), true);
+            mDefaultSharedPrefences
+                    .edit()
+                    .putBoolean(getString(R.string.pref_unit_key), !isPercent)
+                    .apply();
             this.getContentResolver().notifyChange(QuoteProvider.Quotes.CONTENT_URI, null);
         }
-
         return super.onOptionsItemSelected(item);
     }
 

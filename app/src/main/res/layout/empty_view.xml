@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/no_stocks_message"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fontFamily="sans-serif-condensed"
+	android:gravity="center"
+	android:text="@string/message_no_stocks"
+	android:textAppearance="?android:textAppearanceLarge"
+	tools:showIn="@layout/widget_my_stocks"/>
