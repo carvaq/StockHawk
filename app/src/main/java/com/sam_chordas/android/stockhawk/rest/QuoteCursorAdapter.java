@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,41 +26,44 @@ import com.sam_chordas.android.stockhawk.touch_helper.ItemTouchHelperViewHolder;
 public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAdapter.ViewHolder>
         implements ItemTouchHelperAdapter {
 
-    private static Context mContext;
     private static Typeface robotoLight;
-    private boolean isPercent;
+    private Context mContext;
+    private boolean mIsPercent;
     private View mEmptyView;
+    private OnItemClickListener mOnItemClickListener;
+    private static final String TRANSITION_RUNNER = "transition_symbol_%s";
 
-    public QuoteCursorAdapter(Context context, View emptyView) {
+    public QuoteCursorAdapter(Context context, View emptyView, OnItemClickListener listener) {
         super(context, null);
         mContext = context;
         this.mEmptyView = emptyView;
+        this.mOnItemClickListener = listener;
+        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_quote, parent, false);
-        ViewHolder vh = new ViewHolder(itemView);
-        return vh;
+        return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex("symbol")));
-        viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex("bid_price")));
+        viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL)));
+        viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE)));
 
-        if (cursor.getInt(cursor.getColumnIndex("is_up")) == 1) {
+        if (cursor.getInt(cursor.getColumnIndex(QuoteColumns.ISUP)) == 1) {
             viewHolder.change.setBackgroundResource(R.drawable.percent_change_pill_green);
         } else {
             viewHolder.change.setBackgroundResource(R.drawable.percent_change_pill_red);
         }
-        if (Utils.showPercent) {
-            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("percent_change")));
+        if (mIsPercent) {
+            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE)));
         } else {
-            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex("change")));
+            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.CHANGE)));
         }
+        ViewCompat.setTransitionName(viewHolder.symbol, String.format(TRANSITION_RUNNER, cursor.getPosition()));
     }
 
     @Override
@@ -82,7 +86,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         return super.getItemCount();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public class ViewHolder extends RecyclerView.ViewHolder
             implements ItemTouchHelperViewHolder, View.OnClickListener {
         public final TextView symbol;
         public final TextView bidPrice;
@@ -94,6 +98,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
             symbol.setTypeface(robotoLight);
             bidPrice = (TextView) itemView.findViewById(R.id.bid_price);
             change = (TextView) itemView.findViewById(R.id.change);
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -108,7 +113,16 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
         @Override
         public void onClick(View v) {
-
+            mOnItemClickListener.onItemClicked(this, getAdapterPosition());
         }
+    }
+
+    public void toggleUnit() {
+        mIsPercent = !mIsPercent;
+        notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClicked(ViewHolder vh, int position);
     }
 }

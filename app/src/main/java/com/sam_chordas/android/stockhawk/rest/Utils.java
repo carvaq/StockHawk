@@ -22,8 +22,6 @@ public class Utils {
     private static String LOG_TAG = Utils.class.getSimpleName();
     private static String NULL = "null";
 
-    public static boolean showPercent = true;
-
     public static ArrayList<ContentProviderOperation> quoteJsonToContentVals(String json) {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
         JSONObject jsonObject;
@@ -99,6 +97,7 @@ public class Utils {
                         jsonObject.getString("ChangeinPercent"), true));
                 builder.withValue(QuoteColumns.CHANGE, truncateChange(change, false));
                 builder.withValue(QuoteColumns.ISCURRENT, 1);
+                builder.withValue(QuoteColumns.CREATED, System.currentTimeMillis());
                 if (change.charAt(0) == '-') {
                     builder.withValue(QuoteColumns.ISUP, 0);
                 } else {

@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,8 +35,6 @@ import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.QuoteCursorAdapter;
-import com.sam_chordas.android.stockhawk.rest.RecyclerViewItemClickListener;
-import com.sam_chordas.android.stockhawk.rest.Utils;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
@@ -70,19 +71,29 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 networkToast();
             }
         }
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message));
-        recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
-                new RecyclerViewItemClickListener.OnItemClickListener() {
+        mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message),
+                new QuoteCursorAdapter.OnItemClickListener() {
                     @Override
-                    public void onItemClick(View v, int position) {
-                        //TODO:
-                        // do something on item click
+                    public void onItemClicked(QuoteCursorAdapter.ViewHolder vh, int position) {
+                        Cursor cursor = mCursorAdapter.getCursor();
+                        cursor.moveToPosition(position);
+                        String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
+
+                        Intent intent = new Intent(mContext, LineGraphActivity.class);
+                        intent.putExtra(LineGraphActivity.EXTRA_SYMBOL_DETAIL, symbol);
+
+                        Pair<View, String> pair = new Pair<View, String>(
+                                vh.symbol, getString(R.string.transition_name_symbol));
+                        ActivityOptionsCompat activityOptions =
+                                ActivityOptionsCompat.makeSceneTransitionAnimation(MyStocksActivity.this, pair);
+                        ActivityCompat.startActivity(MyStocksActivity.this, intent, activityOptions.toBundle());
                     }
-                }));
+                });
+
         recyclerView.setAdapter(mCursorAdapter);
 
 
@@ -207,7 +218,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
         if (id == R.id.action_change_units) {
             // this is for changing stock changes from percent value to dollar value
-            Utils.showPercent = !Utils.showPercent;
+            mCursorAdapter.toggleUnit();
             this.getContentResolver().notifyChange(QuoteProvider.Quotes.CONTENT_URI, null);
         }
 

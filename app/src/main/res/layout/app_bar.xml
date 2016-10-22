@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.AppBarLayout
-	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
@@ -14,6 +14,7 @@
 		android:layout_height="wrap_content"
 		android:background="?attr/colorPrimary"
 		android:minHeight="?attr/actionBarSize"
+		android:transitionName="@string/transition_name_symbol"
 		app:layout_scrollFlags="scroll|enterAlways"
 		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 </android.support.design.widget.AppBarLayout>
