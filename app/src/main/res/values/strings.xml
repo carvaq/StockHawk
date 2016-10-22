@@ -16,4 +16,5 @@
 	<string name="label_change_in_percent">Change In Percent</string>
 	<string name="label_change">Change</string>
 	<string name="label_bid_price">Bid price</string>
+	<string name="content_description_add_stock">Add stock</string>
 </resources>

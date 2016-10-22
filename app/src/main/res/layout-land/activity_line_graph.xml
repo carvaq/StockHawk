@@ -3,6 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:fitsSystemWindows="true"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
 		android:orientation="horizontal"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-		<ScrollView
+		<android.support.v4.widget.NestedScrollView
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_marginEnd="@dimen/size_8"
@@ -44,9 +45,7 @@
 
 
 				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="@dimen/size_8"
+					style="@style/ValueCaption"
 					android:text="@string/label_bid_price"
 					app:layout_column="0"
 					app:layout_columnSpan="2"
@@ -64,9 +63,7 @@
 					tools:text="1000.56"/>
 
 				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="@dimen/size_8"
+					style="@style/ValueCaption"
 					android:text="@string/label_change"
 					app:layout_column="0"
 					app:layout_row="3"/>
@@ -79,9 +76,7 @@
 					tools:text="100"/>
 
 				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="@dimen/size_8"
+					style="@style/ValueCaption"
 					android:text="@string/label_change_in_percent"
 					app:layout_column="0"
 					app:layout_row="4"/>
@@ -92,7 +87,7 @@
 					android:layout_gravity="start"
 					tools:text="10%"/>
 			</LinearLayout>
-		</ScrollView>
+		</android.support.v4.widget.NestedScrollView>
 
 		<lecho.lib.hellocharts.view.LineChartView
 			android:id="@+id/linechart"
