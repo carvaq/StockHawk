@@ -11,7 +11,7 @@ import android.widget.RemoteViews;
 
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.ui.DetailStockActivity;
-import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
+import com.sam_chordas.android.stockhawk.ui.MainActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -23,7 +23,7 @@ public class MyStocksWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_my_stocks);
 
         // Create an Intent to launch MainActivity
-        Intent intent = new Intent(context, MyStocksActivity.class);
+        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
@@ -34,7 +34,7 @@ public class MyStocksWidget extends AppWidgetProvider {
                 .getBoolean(R.bool.is_phone);
         Intent clickIntentTemplate = isPhone
                 ? new Intent(context, DetailStockActivity.class)
-                : new Intent(context, MyStocksActivity.class);
+                : new Intent(context, MainActivity.class);
         PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(clickIntentTemplate)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

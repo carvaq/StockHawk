@@ -17,4 +17,5 @@
 	<string name="label_change">Change</string>
 	<string name="label_bid_price">Bid price</string>
 	<string name="content_description_add_stock">Add stock</string>
+	<string name="no_stock_selected">You haven\'t selected any stock yet.</string>
 </resources>

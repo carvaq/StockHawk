@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="content_line_graph" format="reference" type="layout">@layout/content_line_graph_left</item>
+</resources>

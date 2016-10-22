@@ -40,4 +40,14 @@
 		<item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
 	</style>
 
+	<style name="ErrorMessage">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:fontFamily">sans-serif-condensed</item>
+		<item name="android:gravity">center</item>
+		<item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+		<item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+		<item name="android:textAppearance">?android:textAppearanceLarge</item>
+	</style>
+
 </resources>

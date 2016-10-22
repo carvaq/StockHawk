@@ -59,9 +59,11 @@ public class LineGraphFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mSelectedSymbol = savedInstanceState != null ? savedInstanceState.getString(EXTRA_SYMBOL_DETAIL) :
-                getArguments().getString(EXTRA_SYMBOL_DETAIL);
+        if (getArguments() != null) {
+            mSelectedSymbol = getArguments().getString(EXTRA_SYMBOL_DETAIL);
+        } else if (savedInstanceState != null) {
+            mSelectedSymbol = savedInstanceState.getString(EXTRA_SYMBOL_DETAIL);
+        }
     }
 
     @Nullable
@@ -69,10 +71,17 @@ public class LineGraphFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_line_graph, container, false);
-        mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
-        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+        if (mSelectedSymbol != null) {
+            view.findViewById(R.id.nothing_selected_yet).setVisibility(View.GONE);
+            view.findViewById(R.id.content_line_graph).setVisibility(View.VISIBLE);
+            mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
+            getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        setStockPanelInformation(view);
+            setStockPanelInformation(view);
+        } else {
+            view.findViewById(R.id.nothing_selected_yet).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.content_line_graph).setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -111,7 +120,9 @@ public class LineGraphFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+        if (mSelectedSymbol != null) {
+            getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+        }
     }
 
     @Override

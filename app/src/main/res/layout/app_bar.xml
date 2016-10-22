@@ -6,7 +6,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:fitsSystemWindows="true"
-	tools:showIn="@layout/activity_my_stocks">
+	tools:showIn="@layout/fragment_my_stocks">
 
 	<android.support.v7.widget.Toolbar
 		android:id="@+id/toolbar"
