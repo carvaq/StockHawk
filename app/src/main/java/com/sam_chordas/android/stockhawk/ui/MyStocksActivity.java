@@ -17,7 +17,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +40,7 @@ import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallback;
 
-public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MyStocksActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -51,7 +50,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     private static final int CURSOR_LOADER_ID = 0;
     private QuoteCursorAdapter mCursorAdapter;
     private Context mContext;
-    private SharedPreferences mDefaultSharedPrefences;
+    private SharedPreferences mDefaultSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDefaultSharedPrefences = PreferenceManager.getDefaultSharedPreferences(this);
+        mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // The intent service is for executing immediate pulls from the Yahoo API
         // GCMTaskService can only schedule tasks, they cannot execute immediately
@@ -80,7 +79,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        boolean isPercent = mDefaultSharedPrefences.getBoolean(getString(R.string.pref_unit_key), true);
+        boolean isPercent = mDefaultSharedPreferences.getBoolean(getString(R.string.pref_unit_key), true);
         mCursorAdapter = new QuoteCursorAdapter(this, findViewById(R.id.no_stocks_message), isPercent,
                 new QuoteCursorAdapter.OnItemClickListener() {
                     @Override
@@ -107,6 +106,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //logEvent("", name, type);
                 if (isConnected()) {
                     showSearchDialog();
                 } else {
@@ -226,8 +226,8 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             // this is for changing stock changes from percent value to dollar value
             mCursorAdapter.toggleUnit();
 
-            boolean isPercent = mDefaultSharedPrefences.getBoolean(getString(R.string.pref_unit_key), true);
-            mDefaultSharedPrefences
+            boolean isPercent = mDefaultSharedPreferences.getBoolean(getString(R.string.pref_unit_key), true);
+            mDefaultSharedPreferences
                     .edit()
                     .putBoolean(getString(R.string.pref_unit_key), !isPercent)
                     .apply();

@@ -6,7 +6,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
@@ -26,7 +25,7 @@ import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class LineGraphActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LineGraphActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_SYMBOL_DETAIL = "symbol_selected";
 
