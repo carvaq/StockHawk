@@ -27,7 +27,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".ui.LineGraphActivity"
+			android:name=".ui.DetailStockActivity"
 			android:parentActivityName=".ui.MyStocksActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"

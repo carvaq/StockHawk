@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal">
+
+	<android.support.v4.widget.NestedScrollView
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_marginEnd="@dimen/size_8"
+		android:layout_marginRight="@dimen/size_8"
+		android:background="@color/material_gray_900"
+		android:elevation="3dp">
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:paddingBottom="@dimen/activity_vertical_margin"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_vertical_margin">
+
+			<TextView
+				android:id="@+id/stock_symbol"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/size_16"
+				android:textAllCaps="true"
+				android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+				android:transitionName="@string/transition_name_symbol"
+				app:layout_columnSpan="2"
+				tools:text="GOOG"/>
+
+
+			<TextView
+				style="@style/ValueCaption"
+				android:text="@string/label_bid_price"
+				app:layout_column="0"
+				app:layout_columnSpan="2"
+				app:layout_row="1"/>
+
+			<TextView
+				android:id="@+id/stock_bid"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/size_16"
+				android:textSize="30sp"
+				app:layout_column="0"
+				app:layout_row="2"
+				app:layout_rowWeight="1"
+				tools:text="1000.56"/>
+
+			<TextView
+				style="@style/ValueCaption"
+				android:text="@string/label_change"
+				app:layout_column="0"
+				app:layout_row="3"/>
+
+
+			<TextView
+				android:id="@+id/stock_change"
+				style="@style/PercentChangeTextStyle"
+				android:layout_gravity="start"
+				tools:text="100"/>
+
+			<TextView
+				style="@style/ValueCaption"
+				android:text="@string/label_change_in_percent"
+				app:layout_column="0"
+				app:layout_row="4"/>
+
+			<TextView
+				android:id="@+id/stock_change_percent"
+				style="@style/PercentChangeTextStyle"
+				android:layout_gravity="start"
+				tools:text="10%"/>
+		</LinearLayout>
+	</android.support.v4.widget.NestedScrollView>
+
+	<lecho.lib.hellocharts.view.LineChartView
+		android:id="@+id/linechart"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+</LinearLayout>

@@ -75,6 +75,14 @@ public class MyStocksActivity extends BaseActivity implements LoaderManager.Load
                 networkToast();
             }
         }
+        setUpViewComponents();
+
+        if (isConnected()) {
+            startPeriodicUpdateTask();
+        }
+    }
+
+    private void setUpViewComponents() {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
@@ -88,8 +96,8 @@ public class MyStocksActivity extends BaseActivity implements LoaderManager.Load
                         cursor.moveToPosition(position);
                         String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
 
-                        Intent intent = new Intent(mContext, LineGraphActivity.class);
-                        intent.putExtra(LineGraphActivity.EXTRA_SYMBOL_DETAIL, symbol);
+                        Intent intent = new Intent(mContext, DetailStockActivity.class);
+                        intent.putExtra(LineGraphFragment.EXTRA_SYMBOL_DETAIL, symbol);
 
                         Pair<View, String> pair = new Pair<View, String>(
                                 vh.symbol, getString(R.string.transition_name_symbol));
@@ -118,10 +126,6 @@ public class MyStocksActivity extends BaseActivity implements LoaderManager.Load
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        if (isConnected()) {
-            startPeriodicUpdateTask();
-        }
     }
 
     private void startPeriodicUpdateTask() {

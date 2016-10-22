@@ -1,12 +1,16 @@
 package com.sam_chordas.android.stockhawk.ui;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sam_chordas.android.stockhawk.R;
@@ -25,8 +29,13 @@ import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class LineGraphActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+/**
+ * Created by Caro Vaquero
+ * Date: 22.10.2016
+ * Project: StockHawk
+ */
 
+public class LineGraphFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_SYMBOL_DETAIL = "symbol_selected";
 
     private static final String[] PROJECTION = new String[]{
@@ -48,26 +57,27 @@ public class LineGraphActivity extends BaseActivity implements LoaderManager.Loa
     private String mSelectedSymbol;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_line_graph);
 
         mSelectedSymbol = savedInstanceState != null ? savedInstanceState.getString(EXTRA_SYMBOL_DETAIL) :
-                getIntent().getStringExtra(EXTRA_SYMBOL_DETAIL);
-
-        mLineChartView = (LineChartView) findViewById(R.id.linechart);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
-        setStockPanelInformation();
+                getArguments().getString(EXTRA_SYMBOL_DETAIL);
     }
 
-    private void setStockPanelInformation() {
-        Cursor cursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_line_graph, container, false);
+        mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
+        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
+        setStockPanelInformation(view);
+        return view;
+    }
+
+    private void setStockPanelInformation(View view) {
+        Cursor cursor = getActivity().getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                 PROJECTION,
                 QuoteColumns.ISCURRENT + " = ? AND " + QuoteColumns.SYMBOL + " = ?",
                 new String[]{"1", mSelectedSymbol},
@@ -78,12 +88,12 @@ public class LineGraphActivity extends BaseActivity implements LoaderManager.Loa
             String percentChange = cursor.getString(INDEX_COLUMN_PERCENT_CHANGE);
             String change = cursor.getString(INDEX_COLUMN_CHANGE);
 
-            getSupportActionBar().setTitle(name);
+            getActivity().setTitle(name);
             int isUp = cursor.getInt(INDEX_COLUMN_ISUP);
-            TextView viewSymbol = (TextView) findViewById(R.id.stock_symbol);
-            TextView viewBid = (TextView) findViewById(R.id.stock_bid);
-            TextView viewChange = (TextView) findViewById(R.id.stock_change);
-            TextView viewChangePercent = (TextView) findViewById(R.id.stock_change_percent);
+            TextView viewSymbol = (TextView) view.findViewById(R.id.stock_symbol);
+            TextView viewBid = (TextView) view.findViewById(R.id.stock_bid);
+            TextView viewChange = (TextView) view.findViewById(R.id.stock_change);
+            TextView viewChangePercent = (TextView) view.findViewById(R.id.stock_change_percent);
             if (isUp == 1) {
                 viewChange.setBackgroundResource(R.drawable.percent_change_pill_green);
                 viewChangePercent.setBackgroundResource(R.drawable.percent_change_pill_green);
@@ -112,7 +122,7 @@ public class LineGraphActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, QuoteProvider.Quotes.CONTENT_URI,
+        return new CursorLoader(getActivity(), QuoteProvider.Quotes.CONTENT_URI,
                 PROJECTION,
                 QuoteColumns.SYMBOL + " = ?",
                 new String[]{mSelectedSymbol}
@@ -153,8 +163,8 @@ public class LineGraphActivity extends BaseActivity implements LoaderManager.Loa
         int lineColor;
         int pointsColor;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            lineColor = getColor(R.color.primary);
-            pointsColor = getColor(R.color.primary_darker);
+            lineColor = getResources().getColor(R.color.primary, getActivity().getTheme());
+            pointsColor = getResources().getColor(R.color.primary_darker, getActivity().getTheme());
         } else {
             lineColor = getResources().getColor(R.color.primary);
             pointsColor = getResources().getColor(R.color.primary_darker);

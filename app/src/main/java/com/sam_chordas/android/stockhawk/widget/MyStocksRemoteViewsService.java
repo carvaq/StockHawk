@@ -3,6 +3,7 @@ package com.sam_chordas.android.stockhawk.widget;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -10,7 +11,7 @@ import android.widget.RemoteViewsService;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
-import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
+import com.sam_chordas.android.stockhawk.ui.LineGraphFragment;
 
 
 public class MyStocksRemoteViewsService extends RemoteViewsService {
@@ -41,6 +42,13 @@ public class MyStocksRemoteViewsService extends RemoteViewsService {
         public void onCreate() {
             mIsUpColor = getColor(R.color.material_green_700);
             mIsDownColor = getColor(R.color.material_red_700);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mIsUpColor = getResources().getColor(R.color.material_green_700, getTheme());
+                mIsDownColor = getResources().getColor(R.color.material_red_700, getTheme());
+            } else {
+                mIsUpColor = getResources().getColor(R.color.material_green_700);
+                mIsDownColor = getResources().getColor(R.color.material_red_700);
+            }
         }
 
         @Override
@@ -93,7 +101,7 @@ public class MyStocksRemoteViewsService extends RemoteViewsService {
                         mCursor.getString(mCursor.getColumnIndex(QuoteColumns.CHANGE)));
             }
             Intent fillIntent = new Intent();
-            fillIntent.putExtra(LineGraphActivity.EXTRA_SYMBOL_DETAIL, symbol);
+            fillIntent.putExtra(LineGraphFragment.EXTRA_SYMBOL_DETAIL, symbol);
             remoteViews.setOnClickFillInIntent(R.id.widget_row, fillIntent);
             return remoteViews;
         }

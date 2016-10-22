@@ -13,6 +13,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?attr/colorPrimary"
+		android:fitsSystemWindows="true"
 		android:minHeight="?attr/actionBarSize"
 		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 </android.support.design.widget.AppBarLayout>

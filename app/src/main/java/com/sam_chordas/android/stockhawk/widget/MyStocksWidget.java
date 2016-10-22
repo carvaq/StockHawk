@@ -10,7 +10,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.widget.RemoteViews;
 
 import com.sam_chordas.android.stockhawk.R;
-import com.sam_chordas.android.stockhawk.ui.LineGraphActivity;
+import com.sam_chordas.android.stockhawk.ui.DetailStockActivity;
 import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 /**
@@ -33,7 +33,7 @@ public class MyStocksWidget extends AppWidgetProvider {
         boolean isPhone = context.getResources()
                 .getBoolean(R.bool.is_phone);
         Intent clickIntentTemplate = isPhone
-                ? new Intent(context, LineGraphActivity.class)
+                ? new Intent(context, DetailStockActivity.class)
                 : new Intent(context, MyStocksActivity.class);
         PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(clickIntentTemplate)
