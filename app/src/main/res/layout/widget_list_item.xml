@@ -12,9 +12,6 @@
 	<TextView
 		android:id="@+id/widget_stock_symbol"
 		style="@style/StockSymbolTextStyle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="start|center_vertical"
 		android:textSize="16sp"
 		tools:text="GOOG"/>
 
@@ -26,11 +23,11 @@
 
 		<TextView
 			android:id="@+id/widget_change"
-			style="@style/PercentChangeTextStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="end"
+			android:padding="0dp"
 			android:textSize="16sp"
+			android:textStyle="bold"
 			tools:text="-100%"/>
 	</FrameLayout>
 </LinearLayout>

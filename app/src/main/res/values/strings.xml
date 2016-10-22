@@ -13,4 +13,7 @@
 	<string name="toast_stock_already_saved">This stock is already saved!</string>
 	<string name="message_no_stocks">You don\'t seem to have any stocks yet.</string>
 	<string name="widget_name">My Stocks</string>
+	<string name="label_change_in_percent">Change In Percent</string>
+	<string name="label_change">Change</string>
+	<string name="label_bid_price">Bid price</string>
 </resources>

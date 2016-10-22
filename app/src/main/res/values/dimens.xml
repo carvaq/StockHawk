@@ -6,6 +6,7 @@
 	<dimen name="widget_margin">8dp</dimen>
 
 	<dimen name="size_8">8dp</dimen>
+	<dimen name="size_16">16dp</dimen>
 	<dimen name="widget_my_stocks_default_width">110dp</dimen>
 	<dimen name="widget_my_stocks_default_height">110dp</dimen>
 

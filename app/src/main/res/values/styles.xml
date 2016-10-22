@@ -13,6 +13,12 @@
 		<item name="android:textSize">20sp</item>
 		<item name="android:textColor">#FFF</item>
 		<item name="android:textStyle">bold</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_gravity">end</item>
+		<item name="android:background">@drawable/percent_change_pill</item>
+		<item name="android:paddingLeft">3dp</item>
+		<item name="android:paddingRight">3dp</item>
 	</style>
 
 	<style name="BidPriceTextStyle">
@@ -22,6 +28,9 @@
 	<style name="StockSymbolTextStyle">
 		<item name="android:textSize">25sp</item>
 		<item name="android:textAllCaps">true</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:gravity">start|center_vertical</item>
 	</style>
 
 </resources>
