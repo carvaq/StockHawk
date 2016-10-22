@@ -64,10 +64,10 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
         }
 
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
-        setHeaderInformation();
+        setStockPanelInformation();
     }
 
-    private void setHeaderInformation() {
+    private void setStockPanelInformation() {
         Cursor cursor = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                 PROJECTION,
                 QuoteColumns.ISCURRENT + " = ? AND " + QuoteColumns.SYMBOL + " = ?",
