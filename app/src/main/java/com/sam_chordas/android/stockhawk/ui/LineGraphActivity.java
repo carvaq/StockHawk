@@ -123,35 +123,25 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.getCount() > 0) {
-            float max = 0;
-            float min = 0;
-            int maxSetCount = 0;
-            int minSetCount = 0;
-
-            data.moveToFirst();
-
-            List<PointValue> values = new ArrayList<>();
+            float max = Float.MIN_VALUE;
+            float min = Float.MAX_VALUE;
             int x = 0;
+
+            List<PointValue> values = new ArrayList<>(data.getCount());
+            data.moveToFirst();
             do {
                 float value = Float.parseFloat(data.getString(INDEX_COLUMN_BIDPRICE));
-                if (value > max) {
-                    max = value;
-                    maxSetCount++;
-                } else if (value < min) {
-                    min = value;
-                    minSetCount++;
-                }
+                if (value > max) max = value;
+                else if (value < min) min = value;
                 values.add(new PointValue(x, value));
                 x++;
             } while (data.moveToNext());
 
-            if (maxSetCount < 3) {
-                max *= 2;
-            } else if (minSetCount < 3) {
-                min *= 2;
-            }
+            //This is done so that the line doesn't stick to an edge
+            max += 10;
+            min -= 10;
 
-            showData(values, (int) Math.floor(min), (int) Math.ceil(max));
+            showStockBidPriceValues(values, (int) Math.floor(min), (int) Math.ceil(max));
         }
     }
 
@@ -160,7 +150,7 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
         mLineChartView.setLineChartData(new LineChartData());
     }
 
-    private void showData(List<PointValue> pointValues, int min, int max) {
+    private void showStockBidPriceValues(List<PointValue> pointValues, int min, int max) {
         int lineColor;
         int pointsColor;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -171,6 +161,9 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
             pointsColor = getResources().getColor(R.color.primary_darker);
         }
 
+        mLineChartView.setViewportCalculationEnabled(false);
+        mLineChartView.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
+
         final Viewport v = new Viewport(mLineChartView.getMaximumViewport());
         v.bottom = min;
         v.top = max;
@@ -178,9 +171,6 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
         v.right = pointValues.size();
         mLineChartView.setMaximumViewport(v);
         mLineChartView.setCurrentViewport(v);
-
-        mLineChartView.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
-        mLineChartView.setScrollEnabled(true);
 
         Line line = new Line(pointValues)
                 .setColor(lineColor)
@@ -190,16 +180,14 @@ public class LineGraphActivity extends AppCompatActivity implements LoaderManage
                 .setPointColor(pointsColor)
                 .setHasPoints(true);
 
-        List<Line> lines = new ArrayList<>();
-        lines.add(line);
-
         LineChartData data = new LineChartData();
+
+        List<Line> lines = new ArrayList<>(1);
+        lines.add(line);
         data.setLines(lines);
 
         Axis axisY = new Axis().setHasLines(true);
         data.setAxisYLeft(axisY);
-
-        mLineChartView.setViewportCalculationEnabled(false);
 
         mLineChartView.setLineChartData(data);
     }
