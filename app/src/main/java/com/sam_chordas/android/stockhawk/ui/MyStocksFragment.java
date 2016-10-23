@@ -28,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
@@ -87,7 +89,6 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
         View view = inflater.inflate(R.layout.fragment_my_stocks, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
         boolean isPercent = mDefaultSharedPreferences.getBoolean(getString(R.string.pref_unit_key), true);
         mCursorAdapter = new QuoteCursorAdapter(getActivity(), view.findViewById(R.id.no_stocks_message),
@@ -111,6 +112,13 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
+       AdView mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         return view;
     }
 
