@@ -12,7 +12,7 @@
 		android:id="@+id/stock_symbol"
 		style="@style/StockSymbolTextStyle"
 		android:layout_width="0dp"
-		android:layout_weight="4"
+		android:layout_weight="5"
 		tools:text="GOOG"/>
 
 
@@ -30,7 +30,7 @@
 	<FrameLayout
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_weight="5">
+		android:layout_weight="6">
 
 		<TextView
 			android:id="@+id/change"
