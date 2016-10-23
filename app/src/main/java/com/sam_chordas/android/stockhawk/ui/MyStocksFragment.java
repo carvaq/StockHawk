@@ -66,6 +66,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
         mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // The intent service is for executing immediate pulls from the Yahoo API
@@ -115,7 +116,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
 
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-       AdView mAdView = (AdView) view.findViewById(R.id.adView);
+        AdView mAdView = (AdView) view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
@@ -191,13 +192,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_change_units) {
-            // this is for changing stock changes from percent value to dollar value
+        if (item.getItemId() == R.id.action_change_units) {
             mCursorAdapter.toggleUnit();
 
             boolean isPercent = mDefaultSharedPreferences.getBoolean(getString(R.string.pref_unit_key), true);
@@ -206,6 +201,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
                     .putBoolean(getString(R.string.pref_unit_key), !isPercent)
                     .apply();
             getActivity().getContentResolver().notifyChange(QuoteProvider.Quotes.CONTENT_URI, null);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

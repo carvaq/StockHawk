@@ -32,6 +32,11 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     private View mEmptyView;
     private OnItemClickListener mOnItemClickListener;
     private static final String TRANSITION_RUNNER = "transition_symbol_%s";
+    private static final String CONTENT_DESCRIPTION = "%s: %s";
+    private String CD_CHANGE;
+    private String CD_CHANGE_PERCENT;
+    private String CD_BID;
+    private String CD_SYMBOL;
 
     public QuoteCursorAdapter(Context context, View emptyView, boolean isPercent, OnItemClickListener listener) {
         super(context, null);
@@ -40,6 +45,10 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
         this.mIsPercent = isPercent;
         this.mOnItemClickListener = listener;
         robotoLight = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
+        CD_CHANGE = context.getString(R.string.label_change);
+        CD_CHANGE_PERCENT = context.getString(R.string.label_change_in_percent);
+        CD_BID = context.getString(R.string.label_bid_price);
+        CD_SYMBOL = context.getString(R.string.label_symbol);
     }
 
     @Override
@@ -51,8 +60,13 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.symbol.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL)));
-        viewHolder.bidPrice.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE)));
+        String symbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
+        viewHolder.symbol.setText(symbol);
+        viewHolder.symbol.setContentDescription(getContentDescription(CD_SYMBOL, symbol));
+        String bidPrice = cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE));
+        viewHolder.bidPrice.setText(bidPrice);
+        viewHolder.bidPrice.setContentDescription(getContentDescription(CD_BID, bidPrice));
+
 
         if (cursor.getInt(cursor.getColumnIndex(QuoteColumns.ISUP)) == 1) {
             viewHolder.change.setBackgroundResource(R.drawable.percent_change_pill_green);
@@ -60,11 +74,20 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
             viewHolder.change.setBackgroundResource(R.drawable.percent_change_pill_red);
         }
         if (mIsPercent) {
-            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE)));
+            String changeInPercent = cursor.getString(cursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE));
+            viewHolder.change.setText(changeInPercent);
+            viewHolder.change.setContentDescription(getContentDescription(CD_CHANGE_PERCENT, changeInPercent));
+            viewHolder.change.setContentDescription(getContentDescription(CD_CHANGE_PERCENT, changeInPercent));
         } else {
-            viewHolder.change.setText(cursor.getString(cursor.getColumnIndex(QuoteColumns.CHANGE)));
+            String change = cursor.getString(cursor.getColumnIndex(QuoteColumns.CHANGE));
+            viewHolder.change.setText(change);
+            viewHolder.change.setContentDescription(getContentDescription(CD_CHANGE, change));
         }
         ViewCompat.setTransitionName(viewHolder.symbol, String.format(TRANSITION_RUNNER, cursor.getPosition()));
+    }
+
+    private String getContentDescription(String caption, String value) {
+        return String.format(CONTENT_DESCRIPTION, caption, value);
     }
 
     @Override

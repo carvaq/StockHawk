@@ -86,5 +86,6 @@
 	<lecho.lib.hellocharts.view.LineChartView
 		android:id="@+id/linechart"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+		android:layout_height="match_parent"
+		android:contentDescription="@string/content_description_line_graph"/>
 </LinearLayout>
