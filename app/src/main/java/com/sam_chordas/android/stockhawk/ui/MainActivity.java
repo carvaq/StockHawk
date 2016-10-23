@@ -3,6 +3,7 @@ package com.sam_chordas.android.stockhawk.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -12,7 +13,7 @@ import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.service.StockIntentService;
 import com.sam_chordas.android.stockhawk.service.StockTaskService;
 
-public class MainActivity extends BaseActivity implements MyStocksFragment.OnStockSelectionListener {
+public class MainActivity extends AppCompatActivity implements MyStocksFragment.OnStockSelectionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

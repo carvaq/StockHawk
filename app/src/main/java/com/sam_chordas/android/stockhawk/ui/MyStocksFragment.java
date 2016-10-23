@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -42,11 +41,19 @@ import com.sam_chordas.android.stockhawk.touch_helper.SimpleItemTouchHelperCallb
  * Project: StockHawk
  */
 
-public class MyStocksFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class MyStocksFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         QuoteCursorAdapter.OnItemClickListener {
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
+
+    private static final String BTN_ADD_ID = "add-id";
+    private static final String BTN_SEARCH_ID = "search-id";
+    private static final String BTN_SEARCH_NAME = "search-stock";
+    private static final String BTN_ADD_NAME = "add";
+    private static final String STOCK_ID = "stock-id";
+    private static final String TYPE_BUTTON = "button";
+    private static final String TYPE_STOCK = "stock";
 
     private Intent mServiceIntent;
     private static final int CURSOR_LOADER_ID = 0;
@@ -92,7 +99,7 @@ public class MyStocksFragment extends Fragment implements LoaderManager.LoaderCa
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //logEvent("", name, type);
+                logEvent(BTN_ADD_ID, BTN_ADD_NAME, TYPE_BUTTON);
                 if (Helper.isConnected(getActivity())) {
                     showSearchDialog();
                 } else {
@@ -138,6 +145,7 @@ public class MyStocksFragment extends Fragment implements LoaderManager.LoaderCa
                         if (c != null) {
                             c.close();
                         }
+                        logEvent(BTN_SEARCH_ID, BTN_SEARCH_NAME, TYPE_BUTTON);
                     }
                 })
                 .show();
@@ -203,7 +211,9 @@ public class MyStocksFragment extends Fragment implements LoaderManager.LoaderCa
                 vh.symbol, getString(R.string.transition_name_symbol));
         ActivityOptionsCompat activityOptions =
                 ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pair);
-        ((OnStockSelectionListener)getActivity()).onStockSelected(symbol, activityOptions.toBundle());
+
+        ((OnStockSelectionListener) getActivity()).onStockSelected(symbol, activityOptions.toBundle());
+        logEvent(STOCK_ID + position, symbol, TYPE_STOCK);
     }
 
     @Override
@@ -227,7 +237,7 @@ public class MyStocksFragment extends Fragment implements LoaderManager.LoaderCa
         mCursorAdapter.swapCursor(null);
     }
 
-    public interface OnStockSelectionListener{
+    public interface OnStockSelectionListener {
         void onStockSelected(String symbol, Bundle activityOptions);
     }
 }

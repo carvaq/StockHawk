@@ -35,7 +35,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  * Project: StockHawk
  */
 
-public class LineGraphFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LineGraphFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_SYMBOL_DETAIL = "symbol_selected";
 
     private static final String[] PROJECTION = new String[]{

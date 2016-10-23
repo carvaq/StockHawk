@@ -1,7 +1,7 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -11,13 +11,13 @@ import com.google.firebase.analytics.FirebaseAnalytics;
  * Project: StockHawk
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseFragment extends Fragment {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
     }
 
     protected void logEvent(String id, String name, String type) {

@@ -1,11 +1,12 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.sam_chordas.android.stockhawk.R;
 
-public class DetailStockActivity extends BaseActivity {
+public class DetailStockActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
