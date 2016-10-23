@@ -52,6 +52,7 @@
 		<receiver android:name=".widget.MyStocksWidget">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+				<action android:name="com.sam_chordas.android.stockhawk.service.StockTaskService.ACTION_PERIODIC_UPDATE"/>
 			</intent-filter>
 
 			<meta-data

@@ -3,6 +3,7 @@ package com.sam_chordas.android.stockhawk.service;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -31,6 +32,7 @@ import okhttp3.Response;
  * and is used for the initialization and adding task as well.
  */
 public class StockTaskService extends GcmTaskService {
+    public static final String ACTION_PERIODIC_UPDATE = "com.sam_chordas.android.stockhawk.service.StockTaskService.ACTION_PERIODIC_UPDATE";
     private static final String YAHOO_BASE_URL = "https://query.yahooapis.com/v1/public/yql?q=";
     private static final String YAHOO_SELECT_STATEMENT = "select * from yahoo.finance.quotes where symbol in (";
     private static final String UTF_8 = "UTF-8";
@@ -94,6 +96,9 @@ public class StockTaskService extends GcmTaskService {
                 mStoredSymbols.replace(mStoredSymbols.length() - 1, mStoredSymbols.length(), ")");
                 addUrlEncodedPath(urlStringBuilder, mStoredSymbols.toString());
             }
+            Intent intent = new Intent(ACTION_PERIODIC_UPDATE);
+            intent.setPackage(mContext.getPackageName());
+            mContext.sendBroadcast(intent);
         } else if (params.getTag().equals(StockIntentService.TAG_ADD)) {
             isUpdate = false;
             // get symbol from params.getExtra and build query
@@ -120,6 +125,7 @@ public class StockTaskService extends GcmTaskService {
 
     private void insertResultsInDatabase(String response) {
         try {
+            ArrayList<ContentProviderOperation> operations = Utils.quoteJsonToContentVals(response);
             ContentValues contentValues = new ContentValues();
             // update ISCURRENT to 0 (false) so new data is current
             if (isUpdate) {
@@ -127,7 +133,6 @@ public class StockTaskService extends GcmTaskService {
                 mContext.getContentResolver().update(QuoteProvider.Quotes.CONTENT_URI, contentValues,
                         null, null);
             }
-            ArrayList<ContentProviderOperation> operations = Utils.quoteJsonToContentVals(response);
             if (!operations.isEmpty()) {
                 mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY, operations);
             }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +62,8 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
     private static final int CURSOR_LOADER_ID = 0;
     private QuoteCursorAdapter mCursorAdapter;
     private SharedPreferences mDefaultSharedPreferences;
+    private Cursor mLatestCursor;
+    private Handler mHandler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -234,7 +237,17 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCursorAdapter.swapCursor(data);
+        //so we don't get the ISCURRENT = 0 updates
+        if (mLatestCursor == null) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCursorAdapter.swapCursor(mLatestCursor);
+                    mLatestCursor = null;
+                }
+            }, 200);
+        }
+        mLatestCursor = data;
     }
 
     @Override
