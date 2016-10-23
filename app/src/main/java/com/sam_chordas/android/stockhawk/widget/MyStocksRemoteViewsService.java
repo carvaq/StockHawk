@@ -40,8 +40,6 @@ public class MyStocksRemoteViewsService extends RemoteViewsService {
 
         @Override
         public void onCreate() {
-            mIsUpColor = getColor(R.color.material_green_700);
-            mIsDownColor = getColor(R.color.material_red_700);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mIsUpColor = getResources().getColor(R.color.material_green_700, getTheme());
                 mIsDownColor = getResources().getColor(R.color.material_red_700, getTheme());

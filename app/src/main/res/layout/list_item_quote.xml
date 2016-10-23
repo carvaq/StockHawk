@@ -11,6 +11,8 @@
 	<TextView
 		android:id="@+id/stock_symbol"
 		style="@style/StockSymbolTextStyle"
+		android:layout_width="0dp"
+		android:layout_weight="4"
 		tools:text="GOOG"/>
 
 
