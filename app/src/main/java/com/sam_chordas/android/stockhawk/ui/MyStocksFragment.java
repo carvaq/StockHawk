@@ -141,6 +141,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
                                     StockIntentService.TAG_ADD);
                             mServiceIntent.putExtra(StockIntentService.EXTRA_SYMBOL, input.toString());
                             getActivity().startService(mServiceIntent);
+                            logSearch(input.toString());
                         }
                         if (c != null) {
                             c.close();
