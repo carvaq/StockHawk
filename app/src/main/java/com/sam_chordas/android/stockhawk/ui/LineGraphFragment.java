@@ -4,18 +4,19 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sam_chordas.android.stockhawk.R;
+import com.sam_chordas.android.stockhawk.data.ChartEntry;
+import com.sam_chordas.android.stockhawk.data.ChartStockData;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.rest.ChartAsyncTask;
+import com.sam_chordas.android.stockhawk.rest.ChartDataReadyListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,6 @@ import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
@@ -35,8 +35,9 @@ import lecho.lib.hellocharts.view.LineChartView;
  * Project: StockHawk
  */
 
-public class LineGraphFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LineGraphFragment extends BaseFragment implements ChartDataReadyListener {
     public static final String EXTRA_SYMBOL_DETAIL = "symbol_selected";
+    private static final String EXTRA_STOCK_DATA = "stock_data";
 
     private static final String[] PROJECTION = new String[]{
             QuoteColumns.BIDPRICE,
@@ -55,6 +56,9 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
 
     private LineChartView mLineChartView;
     private String mSelectedSymbol;
+    private ChartStockData mChartStockData;
+    private TextView mErrorMessage;
+    private View mChartContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
             mSelectedSymbol = getArguments().getString(EXTRA_SYMBOL_DETAIL);
         } else if (savedInstanceState != null) {
             mSelectedSymbol = savedInstanceState.getString(EXTRA_SYMBOL_DETAIL);
+            mChartStockData = savedInstanceState.getParcelable(EXTRA_STOCK_DATA);
         }
     }
 
@@ -71,18 +76,38 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_line_graph, container, false);
-        if (mSelectedSymbol != null) {
-            view.findViewById(R.id.nothing_selected_yet).setVisibility(View.GONE);
-            view.findViewById(R.id.content_line_graph).setVisibility(View.VISIBLE);
-            mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
-            getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+        mErrorMessage = (TextView) view.findViewById(R.id.error_message);
+        mChartContainer = view.findViewById(R.id.content_line_graph);
 
+        if (mSelectedSymbol != null) {
+            hideErrorMessage();
+            mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
+
+            if (mChartStockData == null) {
+                if (Helper.isConnected(getActivity())) {
+                    new ChartAsyncTask(this).execute(mSelectedSymbol);
+                } else {
+                    showErrorMessage(R.string.toast_network_required);
+                }
+            }
             setStockPanelInformation(view);
         } else {
-            view.findViewById(R.id.nothing_selected_yet).setVisibility(View.VISIBLE);
+            showErrorMessage(R.string.no_stock_selected);
+            view.findViewById(R.id.error_message).setVisibility(View.VISIBLE);
             view.findViewById(R.id.content_line_graph).setVisibility(View.GONE);
         }
         return view;
+    }
+
+    private void showErrorMessage(@StringRes int resId) {
+        mChartContainer.setVisibility(View.GONE);
+        mErrorMessage.setText(resId);
+        mErrorMessage.setVisibility(View.VISIBLE);
+    }
+
+    private void hideErrorMessage() {
+        mChartContainer.setVisibility(View.VISIBLE);
+        mErrorMessage.setVisibility(View.GONE);
     }
 
     private void setStockPanelInformation(View view) {
@@ -118,59 +143,29 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mSelectedSymbol != null) {
-            getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_SYMBOL_DETAIL, mSelectedSymbol);
+        outState.putParcelable(EXTRA_STOCK_DATA, mChartStockData);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), QuoteProvider.Quotes.CONTENT_URI,
-                PROJECTION,
-                QuoteColumns.SYMBOL + " = ?",
-                new String[]{mSelectedSymbol}
-                , null);
-    }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.getCount() > 0) {
-            float max = Float.MIN_VALUE;
-            float min = Float.MAX_VALUE;
-            int x = 0;
-
-            List<PointValue> values = new ArrayList<>(data.getCount());
-            data.moveToFirst();
-            do {
-                float value = Float.parseFloat(data.getString(INDEX_COLUMN_BIDPRICE));
-                if (value > max) max = value;
-                else if (value < min) min = value;
-                values.add(new PointValue(x, value));
-                x++;
-            } while (data.moveToNext());
-
-            //This is done so that the line doesn't stick to an edge
-            max += 10;
-            min -= 10;
-
-            showStockBidPriceValues(values, (int) Math.floor(min), (int) Math.ceil(max));
+    public void onDataReady(ChartStockData data) {
+        mChartStockData = data;
+        List<PointValue> pointValues = new ArrayList<>(data.getEntries().size());
+        for (int i = 0; i < data.getEntries().size(); i ++) {
+            ChartEntry chartEntry = data.getEntries().get(i);
+            pointValues.add(new PointValue(i, (float) chartEntry.getClose()));
         }
+        showStockBidPriceValues(pointValues);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mLineChartView.setLineChartData(new LineChartData());
+    public void onError() {
+        showErrorMessage(R.string.general_error);
     }
 
-    private void showStockBidPriceValues(List<PointValue> pointValues, int min, int max) {
+    private void showStockBidPriceValues(List<PointValue> pointValues) {
         int lineColor;
         int pointsColor;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -185,8 +180,8 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
         mLineChartView.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
 
         final Viewport v = new Viewport(mLineChartView.getMaximumViewport());
-        v.bottom = min;
-        v.top = max;
+        v.bottom = (float) (mChartStockData.getMin() - 10);
+        v.top = (float) (mChartStockData.getMax() + 10);
         v.left = 0;
         v.right = pointValues.size();
         mLineChartView.setMaximumViewport(v);
@@ -195,7 +190,6 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
         Line line = new Line(pointValues)
                 .setColor(lineColor)
                 .setHasLabels(false)
-                .setShape(ValueShape.DIAMOND)
                 .setHasLabelsOnlyForSelected(true)
                 .setPointColor(pointsColor)
                 .setHasPoints(true);
@@ -208,7 +202,7 @@ public class LineGraphFragment extends BaseFragment implements LoaderManager.Loa
 
         Axis axisY = new Axis().setHasLines(true);
         data.setAxisYLeft(axisY);
-
         mLineChartView.setLineChartData(data);
     }
+
 }

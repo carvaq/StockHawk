@@ -6,7 +6,7 @@
 	android:orientation="vertical">
 
 	<TextView
-		android:id="@+id/nothing_selected_yet"
+		android:id="@+id/error_message"
 		style="@style/ErrorMessage"
 		android:gravity="center"
 		android:text="@string/no_stock_selected"/>

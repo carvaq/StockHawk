@@ -4,6 +4,8 @@ import android.content.ContentProviderOperation;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.sam_chordas.android.stockhawk.data.ChartEntry;
+import com.sam_chordas.android.stockhawk.data.ChartStockData;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 
@@ -21,6 +23,7 @@ public class Utils {
 
     private static String LOG_TAG = Utils.class.getSimpleName();
     private static String NULL = "null";
+    private static String WEIRD_FORMAT_START = "finance_charts_json_callback(";
 
     public static ArrayList<ContentProviderOperation> quoteJsonToContentVals(String json) {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
@@ -112,5 +115,39 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static ChartStockData parseChartJson(String json) {
+
+        String cleanJson;
+        if (json.contains(WEIRD_FORMAT_START)) {
+            cleanJson = json.substring(WEIRD_FORMAT_START.length(), json.length() - 1);
+            Log.d(LOG_TAG, "parseChartJson: " + cleanJson);
+        } else {
+            cleanJson = json;
+        }
+        ChartStockData data = null;
+
+        try {
+            JSONObject jsonObject = new JSONObject(cleanJson);
+            data = new ChartStockData();
+            JSONObject meta = jsonObject.getJSONObject("meta");
+            data.setCompanyName(meta.getString("Company-Name"));
+            data.setPreviousClose(meta.getDouble("previous_close"));
+            JSONObject ranges = jsonObject.getJSONObject("ranges");
+            JSONObject close = ranges.getJSONObject("close");
+            data.setMax(close.getDouble("max"));
+            data.setMin(close.getDouble("min"));
+            JSONArray series = jsonObject.getJSONArray("series");
+            ArrayList<ChartEntry> entries = new ArrayList<>();
+            for (int i = 0; i < series.length(); i++) {
+                JSONObject index = series.getJSONObject(i);
+                entries.add(new ChartEntry(index.getLong("Timestamp"), index.getDouble("close")));
+            }
+            data.setEntries(entries);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "parseChartJson: ", e);
+        }
+        return data;
     }
 }
