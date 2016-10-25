@@ -21,6 +21,7 @@ import com.sam_chordas.android.stockhawk.rest.ChartDataReadyListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
 import lecho.lib.hellocharts.gesture.ContainerScrollType;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
@@ -153,7 +154,7 @@ public class LineGraphFragment extends BaseFragment implements ChartDataReadyLis
     public void onDataReady(ChartStockData data) {
         mChartStockData = data;
         List<PointValue> pointValues = new ArrayList<>(data.getEntries().size());
-        for (int i = 0; i < data.getEntries().size(); i ++) {
+        for (int i = 0; i < data.getEntries().size(); i++) {
             ChartEntry chartEntry = data.getEntries().get(i);
             pointValues.add(new PointValue(i, (float) chartEntry.getClose()));
         }
@@ -167,13 +168,10 @@ public class LineGraphFragment extends BaseFragment implements ChartDataReadyLis
 
     private void showStockBidPriceValues(List<PointValue> pointValues) {
         int lineColor;
-        int pointsColor;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             lineColor = getResources().getColor(R.color.primary, getActivity().getTheme());
-            pointsColor = getResources().getColor(R.color.primary_darker, getActivity().getTheme());
         } else {
             lineColor = getResources().getColor(R.color.primary);
-            pointsColor = getResources().getColor(R.color.primary_darker);
         }
 
         mLineChartView.setViewportCalculationEnabled(false);
@@ -191,8 +189,7 @@ public class LineGraphFragment extends BaseFragment implements ChartDataReadyLis
                 .setColor(lineColor)
                 .setHasLabels(false)
                 .setHasLabelsOnlyForSelected(true)
-                .setPointColor(pointsColor)
-                .setHasPoints(true);
+                .setHasPoints(false);
 
         LineChartData data = new LineChartData();
 
@@ -200,7 +197,9 @@ public class LineGraphFragment extends BaseFragment implements ChartDataReadyLis
         lines.add(line);
         data.setLines(lines);
 
-        Axis axisY = new Axis().setHasLines(true);
+        Axis axisY = new Axis()
+                .setHasLines(true)
+                .setFormatter(new SimpleAxisValueFormatter(0));
         data.setAxisYLeft(axisY);
         mLineChartView.setLineChartData(data);
     }
