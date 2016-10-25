@@ -144,7 +144,7 @@ public class MyStocksFragment extends BaseFragment implements LoaderManager.Load
                     private void onInputAdded(CharSequence input) {
                         Cursor c = getActivity().getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                                 new String[]{QuoteColumns.SYMBOL}, QuoteColumns.SYMBOL + "= ?",
-                                new String[]{input.toString()}, null);
+                                new String[]{input.toString().toLowerCase()}, null);
                         if (c != null && c.getCount() != 0) {
                             showCenterMessageToUser(R.string.toast_stock_already_saved);
                         } else {

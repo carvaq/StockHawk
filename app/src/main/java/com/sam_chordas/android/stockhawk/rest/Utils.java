@@ -91,7 +91,7 @@ public class Utils {
                         QuoteProvider.Quotes.CONTENT_URI);
                 String change = jsonObject.getString("Change");
 
-                builder.withValue(QuoteColumns.SYMBOL, symbol);
+                builder.withValue(QuoteColumns.SYMBOL, symbol.toLowerCase());
                 builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(bid));
                 builder.withValue(QuoteColumns.PERCENT_CHANGE,
                         truncateChange(jsonObject.getString("ChangeinPercent"), true));
