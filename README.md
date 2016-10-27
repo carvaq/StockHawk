@@ -7,7 +7,7 @@ Udacity Project. This apps lets you add stock that you like to keep an eye on.
 No extras needed. Unless you exceed Yahoos 2000 calls per IP limit, there shouldn't be any need for an API Key.
 
 ##License
-A more detailed explanation of the License terms can be found [here] (LICENSE.txt)
+A more detailed explanation of the License terms can be found [here] (LICENSE.txt).
 ```
 Copyright 2016 Carla Vaquero
 
